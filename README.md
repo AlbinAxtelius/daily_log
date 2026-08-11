@@ -44,7 +44,9 @@ settings.json   hotkey, hours, cap, nudge config, day start, data path
 
 ## Build
 
-Native AppKit + SwiftUI, no dependencies. Open `daily_log.xcodeproj` in Xcode and run.
+Native AppKit + SwiftUI, no dependencies. Requires **macOS 26.5** and Xcode 26.
+Open `daily_log.xcodeproj` and run — set your own team under Signing & Capabilities
+first, since the checked-in project deliberately has none.
 
 ```
 daily_log/
@@ -53,10 +55,27 @@ daily_log/
   Main/      week / day / projects / settings
   Model/     Entry, Project, Settings, Store
   Support/   hotkey, notifications, formatting, theme
+daily_logTests/
 ```
 
-`LSUIElement` — menu-bar item only, no dock icon. Notification actions need a real
-bundle, so test against a built `.app`, not a debug run. The hotkey uses Carbon
-`RegisterEventHotKey`, which needs no Accessibility permission.
+`LSUIElement` — menu-bar item only, no dock icon. The app is unsandboxed
+(`ENABLE_APP_SANDBOX = NO`), which the Carbon hotkey needs and which rules out Mac App
+Store distribution. Notification actions are unreliable from unsigned debug runs, so
+test those against a built `.app`.
+
+## Tests
+
+```
+xcodebuild test -project daily_log.xcodeproj -scheme daily_log -destination 'platform=macOS'
+```
+
+Swift Testing, in a host-less bundle that compiles the pure sources directly — nothing
+launches, and nothing touches your real data directory. Coverage is the logic worth
+pinning down: input parsing, project slugging, quarter-hour rounding, formatting,
+the work-time window, and JSON decoding defaults.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
 See [PLAN.md](PLAN.md) for the full design rationale.

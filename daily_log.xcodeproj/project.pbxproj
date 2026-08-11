@@ -8,7 +8,19 @@
 
 /* Begin PBXFileReference section */
 		B151F7843025EE5F001CF34E /* daily_log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daily_log.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1A000013025EE5F001CF34E /* daily_logTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = daily_logTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1A000113025EE5F001CF34E /* InputParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Capture/InputParser.swift; sourceTree = "<group>"; };
+		B1A000123025EE5F001CF34E /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Models.swift; sourceTree = "<group>"; };
+		B1A000133025EE5F001CF34E /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Store.swift; sourceTree = "<group>"; };
+		B1A000143025EE5F001CF34E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Support/Formatting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXBuildFile section */
+		B1A000213025EE5F001CF34E /* InputParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000113025EE5F001CF34E /* InputParser.swift */; };
+		B1A000223025EE5F001CF34E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000123025EE5F001CF34E /* Models.swift */; };
+		B1A000233025EE5F001CF34E /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000133025EE5F001CF34E /* Store.swift */; };
+		B1A000243025EE5F001CF34E /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000143025EE5F001CF34E /* Formatting.swift */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B151F7863025EE5F001CF34E /* daily_log */ = {
@@ -16,10 +28,22 @@
 			path = daily_log;
 			sourceTree = "<group>";
 		};
+		B1A000023025EE5F001CF34E /* daily_logTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = daily_logTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B151F7813025EE5F001CF34E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1A000053025EE5F001CF34E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +57,8 @@
 			isa = PBXGroup;
 			children = (
 				B151F7863025EE5F001CF34E /* daily_log */,
+				B1A000023025EE5F001CF34E /* daily_logTests */,
+				B1A000093025EE5F001CF34E /* Sources Under Test */,
 				B151F7853025EE5F001CF34E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +67,20 @@
 			isa = PBXGroup;
 			children = (
 				B151F7843025EE5F001CF34E /* daily_log.app */,
+				B1A000013025EE5F001CF34E /* daily_logTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B1A000093025EE5F001CF34E /* Sources Under Test */ = {
+			isa = PBXGroup;
+			children = (
+				B1A000113025EE5F001CF34E /* InputParser.swift */,
+				B1A000123025EE5F001CF34E /* Models.swift */,
+				B1A000133025EE5F001CF34E /* Store.swift */,
+				B1A000143025EE5F001CF34E /* Formatting.swift */,
+			);
+			name = "Sources Under Test";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -70,6 +108,27 @@
 			productReference = B151F7843025EE5F001CF34E /* daily_log.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B1A000033025EE5F001CF34E /* daily_logTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1A000063025EE5F001CF34E /* Build configuration list for PBXNativeTarget "daily_logTests" */;
+			buildPhases = (
+				B1A000043025EE5F001CF34E /* Sources */,
+				B1A000053025EE5F001CF34E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B1A000023025EE5F001CF34E /* daily_logTests */,
+			);
+			name = daily_logTests;
+			packageProductDependencies = (
+			);
+			productName = daily_logTests;
+			productReference = B1A000013025EE5F001CF34E /* daily_logTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -81,6 +140,9 @@
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					B151F7833025EE5F001CF34E = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					B1A000033025EE5F001CF34E = {
 						CreatedOnToolsVersion = 26.5;
 					};
 				};
@@ -100,6 +162,7 @@
 			projectRoot = "";
 			targets = (
 				B151F7833025EE5F001CF34E /* daily_log */,
+				B1A000033025EE5F001CF34E /* daily_logTests */,
 			);
 		};
 /* End PBXProject section */
@@ -119,6 +182,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1A000043025EE5F001CF34E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1A000213025EE5F001CF34E /* InputParser.swift in Sources */,
+				B1A000223025EE5F001CF34E /* Models.swift in Sources */,
+				B1A000233025EE5F001CF34E /* Store.swift in Sources */,
+				B1A000243025EE5F001CF34E /* Formatting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +234,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 87K4Q236NQ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -224,7 +298,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 87K4Q236NQ;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -253,12 +327,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 87K4Q236NQ;
-				ENABLE_APP_SANDBOX = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -285,12 +359,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 87K4Q236NQ;
-				ENABLE_APP_SANDBOX = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -304,6 +378,42 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B1A000073025EE5F001CF34E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "se.axtelius.daily-logTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B1A000083025EE5F001CF34E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "se.axtelius.daily-logTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -326,6 +436,15 @@
 			buildConfigurations = (
 				B151F7923025EE5F001CF34E /* Debug */,
 				B151F7933025EE5F001CF34E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1A000063025EE5F001CF34E /* Build configuration list for PBXNativeTarget "daily_logTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1A000073025EE5F001CF34E /* Debug */,
+				B1A000083025EE5F001CF34E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

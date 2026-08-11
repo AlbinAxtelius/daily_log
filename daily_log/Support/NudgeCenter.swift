@@ -156,6 +156,8 @@ final class NudgeCenter: NSObject {
             content.body = "Nothing logged yet today."
         }
         content.categoryIdentifier = NudgeID.nudgeCategory
+        content.interruptionLevel = .timeSensitive
+        
         return content
     }
 

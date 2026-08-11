@@ -6,25 +6,38 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B1A000213025EE5F001CF34E /* daily_log/Capture/InputParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000113025EE5F001CF34E /* daily_log/Capture/InputParser.swift */; };
+		B1A000223025EE5F001CF34E /* daily_log/Model/Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000123025EE5F001CF34E /* daily_log/Model/Models.swift */; };
+		B1A000233025EE5F001CF34E /* daily_log/Model/Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000133025EE5F001CF34E /* daily_log/Model/Store.swift */; };
+		B1A000243025EE5F001CF34E /* daily_log/Support/Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000143025EE5F001CF34E /* daily_log/Support/Formatting.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B151F7843025EE5F001CF34E /* daily_log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = daily_log.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1A000013025EE5F001CF34E /* daily_logTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = daily_logTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1A000113025EE5F001CF34E /* InputParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Capture/InputParser.swift; sourceTree = "<group>"; };
-		B1A000123025EE5F001CF34E /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Models.swift; sourceTree = "<group>"; };
-		B1A000133025EE5F001CF34E /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Store.swift; sourceTree = "<group>"; };
-		B1A000143025EE5F001CF34E /* Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Support/Formatting.swift; sourceTree = "<group>"; };
+		B1A000113025EE5F001CF34E /* daily_log/Capture/InputParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Capture/InputParser.swift; sourceTree = "<group>"; };
+		B1A000123025EE5F001CF34E /* daily_log/Model/Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Models.swift; sourceTree = "<group>"; };
+		B1A000133025EE5F001CF34E /* daily_log/Model/Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Model/Store.swift; sourceTree = "<group>"; };
+		B1A000143025EE5F001CF34E /* daily_log/Support/Formatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = daily_log/Support/Formatting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXBuildFile section */
-		B1A000213025EE5F001CF34E /* InputParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000113025EE5F001CF34E /* InputParser.swift */; };
-		B1A000223025EE5F001CF34E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000123025EE5F001CF34E /* Models.swift */; };
-		B1A000233025EE5F001CF34E /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000133025EE5F001CF34E /* Store.swift */; };
-		B1A000243025EE5F001CF34E /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A000143025EE5F001CF34E /* Formatting.swift */; };
-/* End PBXBuildFile section */
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B1A000313025EE5F001CF34E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B151F7833025EE5F001CF34E /* daily_log */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B151F7863025EE5F001CF34E /* daily_log */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B1A000313025EE5F001CF34E /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+			);
 			path = daily_log;
 			sourceTree = "<group>";
 		};
@@ -75,10 +88,10 @@
 		B1A000093025EE5F001CF34E /* Sources Under Test */ = {
 			isa = PBXGroup;
 			children = (
-				B1A000113025EE5F001CF34E /* InputParser.swift */,
-				B1A000123025EE5F001CF34E /* Models.swift */,
-				B1A000133025EE5F001CF34E /* Store.swift */,
-				B1A000143025EE5F001CF34E /* Formatting.swift */,
+				B1A000113025EE5F001CF34E /* daily_log/Capture/InputParser.swift */,
+				B1A000123025EE5F001CF34E /* daily_log/Model/Models.swift */,
+				B1A000133025EE5F001CF34E /* daily_log/Model/Store.swift */,
+				B1A000143025EE5F001CF34E /* daily_log/Support/Formatting.swift */,
 			);
 			name = "Sources Under Test";
 			sourceTree = "<group>";
@@ -189,10 +202,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1A000213025EE5F001CF34E /* InputParser.swift in Sources */,
-				B1A000223025EE5F001CF34E /* Models.swift in Sources */,
-				B1A000233025EE5F001CF34E /* Store.swift in Sources */,
-				B1A000243025EE5F001CF34E /* Formatting.swift in Sources */,
+				B1A000213025EE5F001CF34E /* daily_log/Capture/InputParser.swift in Sources */,
+				B1A000223025EE5F001CF34E /* daily_log/Model/Models.swift in Sources */,
+				B1A000233025EE5F001CF34E /* daily_log/Model/Store.swift in Sources */,
+				B1A000243025EE5F001CF34E /* daily_log/Support/Formatting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +345,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = daily_log/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -364,6 +378,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = daily_log/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -25,6 +25,18 @@ final class Navigation {
     }
 }
 
+/// An agent app has no File ▸ Close, so ⌘W is wired up by hand.
+final class MainWindow: NSWindow {
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        let modifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if modifiers == .command, event.charactersIgnoringModifiers == "w" {
+            performClose(nil)
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
+}
+
 @MainActor
 final class MainWindowController: NSObject, NSWindowDelegate {
     private let store: Store
@@ -62,7 +74,7 @@ final class MainWindowController: NSObject, NSWindowDelegate {
             .environment(store)
             .environment(navigation)
 
-        let window = NSWindow(
+        let window = MainWindow(
             contentRect: NSRect(x: 0, y: 0, width: 820, height: 580),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,

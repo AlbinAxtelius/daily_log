@@ -25,11 +25,32 @@ enum Palette {
     ]
 
     /// Stable for the life of a key — a project keeps its colour across launches.
-    static func color(for key: String) -> Color {
-        guard !key.isEmpty else { return Color(nsColor: .systemGray) }
+    static func derivedIndex(for key: String) -> Int {
         var hash: UInt64 = 5381
         for byte in key.utf8 { hash = (hash &* 33) &+ UInt64(byte) }
-        return swatches[Int(hash % UInt64(swatches.count))]
+        return Int(hash % UInt64(swatches.count))
+    }
+
+    /// Wraps rather than traps. A chosen index is written to disk and outlives
+    /// the palette that produced it, so shortening `swatches` must degrade to a
+    /// different colour, never a crash on someone's existing projects.
+    static func color(at index: Int) -> Color {
+        let count = swatches.count
+        return swatches[((index % count) + count) % count]
+    }
+
+    /// The colour a key falls back to when nothing has been chosen.
+    static func color(for key: String) -> Color {
+        guard !key.isEmpty else { return Color(nsColor: .systemGray) }
+        return color(at: derivedIndex(for: key))
+    }
+}
+
+extension Store {
+    /// An explicit choice wins; otherwise the key's hash decides.
+    func color(for key: String) -> Color {
+        guard let index = project(key)?.colorIndex else { return Palette.color(for: key) }
+        return Palette.color(at: index)
     }
 }
 
@@ -78,6 +99,8 @@ private struct HoverHighlight: ViewModifier {
 /// A day's project split, drawn as one capsule. `scale` is the hour count that
 /// fills the full width, so rows stay comparable to each other.
 struct StackedBar: View {
+    @Environment(Store.self) private var store
+
     let segments: [(key: String, hours: Double)]
     let scale: Double
     var height: CGFloat = 6
@@ -86,7 +109,7 @@ struct StackedBar: View {
         GeometryReader { geo in
             HStack(spacing: 1) {
                 ForEach(segments, id: \.key) { segment in
-                    Palette.color(for: segment.key)
+                    store.color(for: segment.key)
                         .frame(width: width(segment.hours, in: geo.size.width))
                 }
                 Spacer(minLength: 0)
@@ -105,6 +128,8 @@ struct StackedBar: View {
 
 /// A single project's share of something, in that project's colour.
 struct ShareBar: View {
+    @Environment(Store.self) private var store
+
     let key: String
     let fraction: Double
     var height: CGFloat = 3
@@ -112,7 +137,7 @@ struct ShareBar: View {
     var body: some View {
         GeometryReader { geo in
             Capsule()
-                .fill(Palette.color(for: key))
+                .fill(store.color(for: key))
                 .frame(width: max(2, geo.size.width * CGFloat(min(max(fraction, 0), 1))))
         }
         .frame(height: height)
@@ -123,12 +148,16 @@ struct ShareBar: View {
 
 /// The legend dot that ties a name to its colour everywhere it appears.
 struct ProjectDot: View {
+    @Environment(Store.self) private var store
+
     let key: String
     var size: CGFloat = 7
+    /// Set while editing, to preview a colour that has not been saved yet.
+    var override: Color?
 
     var body: some View {
         Circle()
-            .fill(Palette.color(for: key))
+            .fill(override ?? store.color(for: key))
             .frame(width: size, height: size)
     }
 }

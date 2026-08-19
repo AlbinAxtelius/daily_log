@@ -79,6 +79,8 @@ struct Settings: Codable, Equatable {
 
     /// Nudge after this much silence.
     var silenceMinutes: Int = 60
+    /// Nudge again this often while a nudge goes unanswered. 0 = once per silence window.
+    var repeatMinutes: Int = 15
     /// End-of-day summary, minutes past midnight.
     var endOfDayMinutes: Int = 16 * 60 + 30
 
@@ -104,6 +106,7 @@ struct Settings: Codable, Equatable {
         workStartMinutes = try c.decodeIfPresent(Int.self, forKey: .workStartMinutes) ?? d.workStartMinutes
         workEndMinutes = try c.decodeIfPresent(Int.self, forKey: .workEndMinutes) ?? d.workEndMinutes
         silenceMinutes = try c.decodeIfPresent(Int.self, forKey: .silenceMinutes) ?? d.silenceMinutes
+        repeatMinutes = try c.decodeIfPresent(Int.self, forKey: .repeatMinutes) ?? d.repeatMinutes
         endOfDayMinutes = try c.decodeIfPresent(Int.self, forKey: .endOfDayMinutes) ?? d.endOfDayMinutes
         capMinutes = try c.decodeIfPresent(Int.self, forKey: .capMinutes) ?? d.capMinutes
         dayStartHour = try c.decodeIfPresent(Int.self, forKey: .dayStartHour) ?? d.dayStartHour

@@ -70,6 +70,15 @@ struct SettingsView: View {
                             .frame(width: 150)
                         }
                         rowDivider
+                        labelled("Remind again after") {
+                            Stepper(
+                                store.settings.repeatMinutes == 0
+                                    ? "Off" : "\(store.settings.repeatMinutes) min",
+                                value: $store.settings.repeatMinutes, in: 0...120, step: 5
+                            )
+                            .frame(width: 150)
+                        }
+                        rowDivider
                         labelled("End-of-day summary") {
                             MinutesField(minutes: $store.settings.endOfDayMinutes)
                         }

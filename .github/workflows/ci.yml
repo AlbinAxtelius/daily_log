@@ -47,6 +47,13 @@ jobs:
     runs-on: macos-26
     permissions:
       contents: write
+    env:
+      # Job-level, not step-level: a step's own `if` cannot see env it declares
+      # itself, and this gates the tap step on whether the secret exists at all.
+      # github.token cannot reach another repo, so pushing the cask needs a PAT
+      # scoped to homebrew-tap. Without it the release still ships — only the
+      # tap update is skipped.
+      TAP_TOKEN: ${{ secrets.TAP_TOKEN }}
     steps:
       # fetch-depth: 0 so `gh release create --generate-notes` can see history,
       # and so release.sh can pin the tag to this exact commit.
@@ -97,17 +104,60 @@ jobs:
           SKIP_TESTS: 1
         run: Tools/release.sh --publish
 
+      - name: Update Homebrew tap
+        id: tap
+        if: steps.version.outputs.publish == 'true' && env.TAP_TOKEN != ''
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          # No `set -x` anywhere below: the token lives in the remote URL.
+          git clone --depth 1 \
+            "https://x-access-token:${TAP_TOKEN}@github.com/AlbinAxtelius/homebrew-tap.git" \
+            tap
+
+          cp build/release/daily-log.rb tap/Casks/daily-log.rb
+          cd tap
+
+          # Re-running a release with an identical cask should be a no-op rather
+          # than an empty commit.
+          if git diff --quiet; then
+            echo "::notice::Tap already carries this cask — nothing to push."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qam "daily-log $VERSION"
+          git push -q
+          echo "::notice::Pushed daily-log $VERSION to the tap."
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Tap not configured
+        if: steps.version.outputs.publish == 'true' && env.TAP_TOKEN == ''
+        run: |
+          echo "::warning::TAP_TOKEN is not set — the release shipped, but the tap still points at the previous version. Copy daily-log.rb from the release assets by hand, or set the secret."
+
       - name: Summary
         env:
           VERSION: ${{ steps.version.outputs.version }}
           PUBLISHED: ${{ steps.version.outputs.publish }}
+          TAP_PUSHED: ${{ steps.tap.outputs.pushed }}
         run: |
           if [[ "$PUBLISHED" == "true" ]]; then
             {
               echo "### Released \`v$VERSION\` :rocket:"
               echo
-              echo "Copy \`daily-log.rb\` from the release assets into"
-              echo "\`AlbinAxtelius/homebrew-tap\` as \`Casks/daily-log.rb\`."
+              if [[ "$TAP_PUSHED" == "true" ]]; then
+                echo "Tap updated — \`brew upgrade --cask daily-log\` now serves \`$VERSION\`."
+              elif [[ "$TAP_PUSHED" == "false" ]]; then
+                echo "Tap already carried this cask; nothing to push."
+              else
+                echo ":warning: Tap **not** updated. Copy \`daily-log.rb\` from the"
+                echo "release assets into \`AlbinAxtelius/homebrew-tap\`, or set \`TAP_TOKEN\`."
+              fi
             } >> "$GITHUB_STEP_SUMMARY"
           else
             {

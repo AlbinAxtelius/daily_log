@@ -116,15 +116,20 @@ those against a built `.app`.
 CI runs the suite on every push and PR, then cuts a release *only* when
 `MARKETING_VERSION` names a version that has no matching release — so ordinary commits
 are silent, and no push can accidentally re-release a version. The zip and the rendered
-cask both land as release assets; copy `daily-log.rb` into
-`AlbinAxtelius/homebrew-tap` as `Casks/daily-log.rb`.
+cask both land as release assets, and the cask is pushed to the tap, so the new version
+is installable without a manual step.
 
 ```
 push to main
 ├── always ......................... run tests
-├── MARKETING_VERSION unreleased ... build → zip → publish v1.1
+├── MARKETING_VERSION unreleased ... build → zip → publish v1.1 → update tap
 └── already released ............... stop, note it in the job summary
 ```
+
+The tap push needs `TAP_TOKEN`: a fine-grained PAT scoped to `homebrew-tap` alone with
+**Contents: read and write**. `GITHUB_TOKEN` cannot reach another repository, so there
+is no way around a second credential. Without the secret the release still ships intact
+and CI warns that the tap was left behind.
 
 `main` is protected: changes go through a PR, `test` must pass, and force-push and
 deletion are blocked.

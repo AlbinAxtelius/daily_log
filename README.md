@@ -56,7 +56,12 @@ daily_log/
   Model/     Entry, Project, Settings, Store
   Support/   hotkey, notifications, formatting, theme
 daily_logTests/
+Tools/       make-icon.swift
 ```
+
+The logo is a day dial — an open ring with a wedge for the part of the day that's
+logged — drawn in code rather than checked in as art. `swift Tools/make-icon.swift`
+from the repo root rewrites the AppIcon PNGs and the monochrome menu-bar template.
 
 `LSUIElement` — menu-bar item only, no dock icon. The app is unsandboxed
 (`ENABLE_APP_SANDBOX = NO`), which the Carbon hotkey needs and which rules out Mac App

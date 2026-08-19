@@ -50,9 +50,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, AppCoordinator {
 
     private func setUpStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(
-            systemSymbolName: "text.append", accessibilityDescription: "Daily"
-        )
+        // The day dial from Tools/make-icon.swift, tinted by the bar itself.
+        let icon = NSImage(named: "MenuBarIcon")
+        icon?.accessibilityDescription = "Daily"
+        item.button?.image = icon
         item.button?.target = self
         item.button?.action = #selector(statusItemClicked)
         item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])

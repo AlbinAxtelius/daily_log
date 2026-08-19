@@ -133,6 +133,11 @@ struct MainWindowView: View {
 
             Spacer(minLength: 12)
 
+            Text(AppInfo.short)
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundStyle(.tertiary)
+                .help(AppInfo.full)
+
             Button(action: onCapture) {
                 Label("Log", systemImage: "plus")
                     .font(.system(size: 12, weight: .medium))

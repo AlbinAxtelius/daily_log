@@ -200,7 +200,12 @@ struct CaptureBarView: View {
             Spacer()
             if !expanded {
                 Text("↓ today")
+                Text("·")
             }
+            // A step quieter than the key hints — it is reference, not guidance.
+            Text(AppInfo.short)
+                .font(.system(size: 10, design: .monospaced))
+                .foregroundStyle(.quaternary)
         }
         .font(.system(size: 10))
         .foregroundStyle(.tertiary)

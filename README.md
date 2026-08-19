@@ -111,10 +111,34 @@ those against a built `.app`.
 
 ## Distribution
 
-`Tools/release.sh` builds a Release, universal, ad-hoc-signed `.app`, zips it, and renders
-`build/release/daily-log.rb` from `Tools/daily-log.rb.tmpl`. Add `--publish` to cut the
-GitHub release and upload the zip; copy the rendered cask into
+**Shipping a version is one act: bump `MARKETING_VERSION` in Xcode and merge.**
+
+CI runs the suite on every push and PR, then cuts a release *only* when
+`MARKETING_VERSION` names a version that has no matching release — so ordinary commits
+are silent, and no push can accidentally re-release a version. The zip and the rendered
+cask both land as release assets; copy `daily-log.rb` into
 `AlbinAxtelius/homebrew-tap` as `Casks/daily-log.rb`.
+
+```
+push to main
+├── always ......................... run tests
+├── MARKETING_VERSION unreleased ... build → zip → publish v1.1
+└── already released ............... stop, note it in the job summary
+```
+
+`main` is protected: changes go through a PR, `test` must pass, and force-push and
+deletion are blocked.
+
+<details>
+<summary><strong>Running a release by hand</strong></summary>
+
+`Tools/release.sh` is what CI invokes, and works standalone. It builds a Release,
+universal, ad-hoc-signed `.app`, zips it, and renders `build/release/daily-log.rb` from
+`Tools/daily-log.rb.tmpl`. Add `--publish` to cut the GitHub release and upload both
+assets. `SKIP_TESTS=1` skips the gating test run; `ALLOW_DIRTY=1` builds from a dirty
+tree.
+
+</details>
 
 No Apple Developer account is involved. Ad-hoc signing is enough to *execute* the app; the
 Gatekeeper prompt comes from the quarantine xattr on the download, which `--no-quarantine`

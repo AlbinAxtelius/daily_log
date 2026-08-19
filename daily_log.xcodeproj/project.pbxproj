@@ -23,7 +23,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B1A000313025EE5F001CF34E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		B1A000313025EE5F001CF34E /* Exceptions for "daily_log" folder in "daily_log" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -36,7 +36,7 @@
 		B151F7863025EE5F001CF34E /* daily_log */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B1A000313025EE5F001CF34E /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+				B1A000313025EE5F001CF34E /* Exceptions for "daily_log" folder in "daily_log" target */,
 			);
 			path = daily_log;
 			sourceTree = "<group>";

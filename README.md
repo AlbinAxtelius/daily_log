@@ -68,6 +68,25 @@ from the repo root rewrites the AppIcon PNGs and the monochrome menu-bar templat
 Store distribution. Notification actions are unreliable from unsigned debug runs, so
 test those against a built `.app`.
 
+## Distribution
+
+`Tools/release.sh` builds a Release, universal, ad-hoc-signed `.app`, zips it, and
+renders `build/release/daily-log.rb` from `Tools/daily-log.rb.tmpl`. Add `--publish` to
+cut the GitHub release and upload the zip; copy the rendered cask into
+`AlbinAxtelius/homebrew-tap` as `Casks/daily-log.rb`. Then:
+
+```
+brew tap albinaxtelius/tap
+brew install --cask --no-quarantine daily-log
+```
+
+No Apple Developer account is involved. Ad-hoc signing is enough to *execute* the app;
+the Gatekeeper prompt comes from the quarantine xattr on the download, which
+`--no-quarantine` never attaches — set `HOMEBREW_CASK_OPTS="--no-quarantine"` in your
+shell profile so `brew upgrade` does not re-quarantine. The cost of skipping
+notarization is that the code signature changes every build, so macOS may treat an
+upgrade as a different app and re-ask for notification permission.
+
 ## Tests
 
 ```

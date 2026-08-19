@@ -72,7 +72,7 @@ echo "==> package"
 ditto -c -k --keepParent "$OUT/$APP" "$ZIP"
 SHA=$(shasum -a 256 "$ZIP" | cut -d' ' -f1)
 
-sed -e "s/@VERSION@/$VERSION/g" -e "s/@SHA256@/$SHA/g" \
+sed -e '/^#!/d' -e "s/@VERSION@/$VERSION/g" -e "s/@SHA256@/$SHA/g" \
 	Tools/daily-log.rb.tmpl > "$OUT/daily-log.rb"
 
 echo
@@ -84,7 +84,14 @@ echo
 
 if [[ $PUBLISH -eq 1 ]]; then
 	echo "==> publish $TAG"
-	gh release create "$TAG" "$ZIP" --title "$TAG" --generate-notes
+	# --target pins the tag to the commit that was actually built. Without it
+	# `gh` tags the default branch, which is only right by coincidence.
+	#
+	# The cask rides along as an asset so the tap can be updated from the
+	# release itself, without re-running this script to regenerate it.
+	gh release create "$TAG" "$ZIP" "$OUT/daily-log.rb" \
+		--title "$TAG" --generate-notes \
+		--target "$(git rev-parse HEAD)"
 	echo
 	echo "Now copy $OUT/daily-log.rb into homebrew-tap/Casks/ and commit it."
 else

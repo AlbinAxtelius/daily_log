@@ -1,0 +1,119 @@
+name: CI
+
+# Tests gate every change. A release is cut only when MARKETING_VERSION names a
+# version that has not been released yet — so routine commits to main run the
+# tests and stop, and shipping is an explicit act of bumping the version in
+# Xcode rather than a side effect of pushing.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test
+    # Pinned, not macos-latest: that label follows the newest image and would
+    # pull in a future Xcode, while this project targets macOS 26.5 / Xcode 26.
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+
+      - name: Test
+        run: |
+          xcodebuild test \
+            -project daily_log.xcodeproj \
+            -scheme daily_log \
+            -destination 'platform=macOS' \
+            -quiet
+
+  release:
+    name: release
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    permissions:
+      contents: write
+    steps:
+      # fetch-depth: 0 so `gh release create --generate-notes` can see history,
+      # and so release.sh can pin the tag to this exact commit.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Every target carries the same MARKETING_VERSION. If they ever drift,
+          # the version to release is genuinely ambiguous — stop rather than
+          # guess which one is the app's. (macOS runners ship bash 3.2, so no
+          # mapfile here.)
+          versions=$(
+            sed -n 's/[[:space:]]*MARKETING_VERSION = \(.*\);/\1/p' \
+              daily_log.xcodeproj/project.pbxproj | sort -u
+          )
+          if [[ -z "$versions" ]]; then
+            echo "::error::no MARKETING_VERSION found in project.pbxproj"
+            exit 1
+          fi
+          if [[ $(printf '%s\n' "$versions" | wc -l) -ne 1 ]]; then
+            echo "::error::MARKETING_VERSION differs across targets: $(echo $versions)"
+            exit 1
+          fi
+
+          version="$versions"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "::notice::v$version is already released — no new release."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::v$version is unreleased — cutting a release."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and publish
+        if: steps.version.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # The `test` job already ran the suite against this exact commit.
+          SKIP_TESTS: 1
+        run: Tools/release.sh --publish
+
+      - name: Summary
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          PUBLISHED: ${{ steps.version.outputs.publish }}
+        run: |
+          if [[ "$PUBLISHED" == "true" ]]; then
+            {
+              echo "### Released \`v$VERSION\` :rocket:"
+              echo
+              echo "Copy \`daily-log.rb\` from the release assets into"
+              echo "\`AlbinAxtelius/homebrew-tap\` as \`Casks/daily-log.rb\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "### No release"
+              echo
+              echo "\`MARKETING_VERSION\` is still \`$VERSION\`, which is already"
+              echo "published. Bump it in Xcode to ship."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi

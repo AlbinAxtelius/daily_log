@@ -1,6 +1,7 @@
-# Homebrew cask template. `Tools/release.sh` fills in the version and checksum
-# and writes the result to build/release/daily-log.rb; copy that into
-# AlbinAxtelius/homebrew-tap as Casks/daily-log.rb.
+#! Homebrew cask template. `Tools/release.sh` fills in the version and checksum
+#! and writes the result to build/release/daily-log.rb; copy that into
+#! AlbinAxtelius/homebrew-tap as Casks/daily-log.rb. Lines starting with `#!`
+#! are template-only notes and are stripped from the rendered cask.
 #
 # The app is ad-hoc signed, not notarized, so install it with quarantine off:
 #
@@ -19,7 +20,9 @@ cask "daily-log" do
   desc "Menu-bar agent that nudges you to log what you are doing"
   homepage "https://github.com/AlbinAxtelius/daily_log"
 
-  depends_on macos: ">= :tahoe"
+  # A bare symbol means "this version or newer". The `">= :tahoe"` string form
+  # is deprecated.
+  depends_on macos: :tahoe
 
   app "daily_log.app"
 

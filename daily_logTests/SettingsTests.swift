@@ -69,6 +69,7 @@ struct SettingsDecodingTests {
         #expect(decoded.capMinutes == 45)
         #expect(decoded.dayStartHour == 6)
         #expect(decoded.silenceMinutes == Settings().silenceMinutes)
+        #expect(decoded.repeatMinutes == Settings().repeatMinutes)
         #expect(decoded.workDays == Settings().workDays)
         #expect(decoded.dataPath == nil)
     }

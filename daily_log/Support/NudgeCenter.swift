@@ -14,6 +14,8 @@ import UserNotifications
 
 enum NudgeID {
     static let nudgeCategory = "daily.nudge"
+    /// Stable, so a repeat nudge replaces the ignored one instead of stacking.
+    static let nudgeRequest = "daily.nudge.request"
     static let eodCategory = "daily.eod"
     static let sameAsBefore = "daily.action.same"
     static let open = "daily.action.open"
@@ -30,6 +32,9 @@ final class NudgeCenter: NSObject {
     private var silenceTimer: Timer?
     private var endOfDayTimer: Timer?
     private var suspended = false
+
+    /// When the last nudge went out. Newer than the last entry means it went unanswered.
+    private var lastNudgeAt: Date?
 
     private let center = UNUserNotificationCenter.current()
 
@@ -87,7 +92,7 @@ final class NudgeCenter: NSObject {
         silenceTimer?.invalidate(); silenceTimer = nil
         endOfDayTimer?.invalidate(); endOfDayTimer = nil
         center.removeAllPendingNotificationRequests()
-        center.removeDeliveredNotifications(withIdentifiers: [NudgeID.nudgeCategory])
+        center.removeDeliveredNotifications(withIdentifiers: [NudgeID.nudgeRequest])
     }
 
     @objc private func systemDidWake() {
@@ -102,14 +107,25 @@ final class NudgeCenter: NSObject {
         scheduleEndOfDay()
     }
 
-    /// Logging anything resets this, so a well-logged day stays silent.
+    /// Logging anything resets this, so a well-logged day stays silent. An ignored nudge
+    /// comes back after `repeatMinutes` instead of after the full silence window.
     func scheduleSilenceNudge() {
         silenceTimer?.invalidate()
         guard !suspended else { return }
 
+        let settings = store.settings
         let now = Date()
-        let base = store.lastEntry.map { max($0.at, now.addingTimeInterval(-3600 * 24)) } ?? now
-        var fire = base.addingTimeInterval(Double(store.settings.silenceMinutes) * 60)
+        let logged = store.lastEntry.map { max($0.at, now.addingTimeInterval(-3600 * 24)) } ?? now
+
+        var fire: Date
+        if let nudged = lastNudgeAt, nudged > logged {
+            // Still unanswered.
+            guard settings.repeatMinutes > 0 else { return }
+            fire = nudged.addingTimeInterval(Double(settings.repeatMinutes) * 60)
+        } else {
+            lastNudgeAt = nil
+            fire = logged.addingTimeInterval(Double(settings.silenceMinutes) * 60)
+        }
         // Never nag the instant the app launches or wakes.
         fire = max(fire, now.addingTimeInterval(60))
         fire = nextWorkTime(atOrAfter: fire)
@@ -138,7 +154,8 @@ final class NudgeCenter: NSObject {
     private func fireSilenceNudge() {
         defer { scheduleSilenceNudge() }
         guard store.settings.isWorkTime(Date()) else { return }
-        deliver(silenceContent())
+        lastNudgeAt = Date()
+        deliver(silenceContent(), id: NudgeID.nudgeRequest)
     }
 
     private func fireEndOfDay() {
@@ -174,10 +191,8 @@ final class NudgeCenter: NSObject {
         return content
     }
 
-    private func deliver(_ content: UNMutableNotificationContent) {
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString, content: content, trigger: nil
-        )
+    private func deliver(_ content: UNMutableNotificationContent, id: String = UUID().uuidString) {
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: nil)
         center.add(request)
     }
 

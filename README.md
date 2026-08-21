@@ -17,6 +17,8 @@ brew tap albinaxtelius/tap
 brew install --cask --no-quarantine daily-log
 ```
 
+`--no-quarantine` is not optional — see [Install](#install).
+
 </div>
 
 ---
@@ -25,6 +27,52 @@ brew install --cask --no-quarantine daily-log
 > **It is a memory aid, not a time-accounting engine.** Nothing it computes is
 > authoritative; every number is a hint you use while typing your own figures into the
 > real timesheet. Totals are rendered with a `~` prefix for that reason.
+
+## Install
+
+```sh
+brew tap albinaxtelius/tap
+brew install --cask --no-quarantine daily-log
+```
+
+Then launch it from `/Applications` and allow notifications when asked — that is the only
+permission it wants. The menu-bar icon is the whole UI; there is no dock icon.
+
+### Why `--no-quarantine`
+
+There is no Apple Developer account behind this app. Releases are **ad-hoc signed and not
+notarized**, which is enough for macOS to *run* the binary but not enough to satisfy
+Gatekeeper. Homebrew normally stamps a downloaded app with the `com.apple.quarantine`
+extended attribute, and on first launch macOS refuses a quarantined app it cannot verify:
+
+> "daily_log" cannot be opened because Apple cannot check it for malicious software.
+
+`--no-quarantine` tells Homebrew not to attach that attribute in the first place, so the
+app opens normally. You are choosing to trust this build instead of asking Apple to vouch
+for it — read the source and the [release workflow](.github/workflows/ci.yml) if you would
+rather verify than trust.
+
+### Keep it trusted across upgrades
+
+`brew upgrade` re-downloads the app and will re-quarantine it unless you pass the flag
+again. Make it permanent in your shell profile:
+
+```sh
+echo 'export HOMEBREW_CASK_OPTS="--no-quarantine"' >> ~/.zshrc
+```
+
+### Already installed it quarantined?
+
+Strip the attribute by hand and reopen:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/daily_log.app
+open /Applications/daily_log.app
+```
+
+Right-click → **Open** works too, once, per build. Because every build carries a fresh
+ad-hoc signature, macOS may treat an upgrade as a different app — so a re-prompt for
+notification permission after an update is expected, not a bug.
 
 ## Capture
 
@@ -145,14 +193,9 @@ tree.
 
 </details>
 
-No Apple Developer account is involved. Ad-hoc signing is enough to *execute* the app; the
-Gatekeeper prompt comes from the quarantine xattr on the download, which `--no-quarantine`
-never attaches — set `HOMEBREW_CASK_OPTS="--no-quarantine"` in your shell profile so
-`brew upgrade` does not re-quarantine.
-
-> [!NOTE]
-> The cost of skipping notarization: the code signature changes every build, so macOS may
-> treat an upgrade as a different app and re-ask for notification permission.
+No Apple Developer account is involved — releases are ad-hoc signed, never notarized, which
+is what makes `--no-quarantine` a requirement rather than a convenience. See
+[Install](#install) for what that means on the receiving end.
 
 ## Tests
 

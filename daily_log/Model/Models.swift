@@ -38,13 +38,19 @@ struct Project: Identifiable, Codable, Hashable {
     var key: String
     var name: String
     var archived: Bool
+    /// Index into `Palette.swatches`. nil means "whatever the key hashes to",
+    /// which is what every project did before colours could be chosen — so an
+    /// untouched project keeps the colour it has always had, and projects.json
+    /// gains no key until someone actually picks one.
+    var colorIndex: Int?
 
     var id: String { key }
 
-    init(key: String, name: String? = nil, archived: Bool = false) {
+    init(key: String, name: String? = nil, archived: Bool = false, colorIndex: Int? = nil) {
         self.key = key
         self.name = name ?? key
         self.archived = archived
+        self.colorIndex = colorIndex
     }
 
     init(from decoder: Decoder) throws {
@@ -52,6 +58,7 @@ struct Project: Identifiable, Codable, Hashable {
         key = try c.decode(String.self, forKey: .key)
         name = try c.decodeIfPresent(String.self, forKey: .name) ?? key
         archived = try c.decodeIfPresent(Bool.self, forKey: .archived) ?? false
+        colorIndex = try c.decodeIfPresent(Int.self, forKey: .colorIndex)
     }
 
     /// `acme portal!` -> `acmeportal`. Tags are keys; the display name is free-form.

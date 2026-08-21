@@ -34,6 +34,23 @@ struct ProjectDecodingTests {
         let project = try JSONIO.decoder.decode(Project.self, from: json)
         #expect(project.name == "acme")
         #expect(project.archived == false)
+        // nil, not 0 — 0 is a real swatch, and a project written before
+        // colours existed must stay on its derived one.
+        #expect(project.colorIndex == nil)
+    }
+
+    @Test("A chosen colour survives a round trip")
+    func colorIndex() throws {
+        let project = Project(key: "acme", name: "Acme Corp", archived: false, colorIndex: 3)
+        let data = try JSONIO.encoder.encode(project)
+        #expect(try JSONIO.decoder.decode(Project.self, from: data) == project)
+    }
+
+    @Test("An unstyled project writes no colour key")
+    func omitsUnsetColor() throws {
+        let data = try JSONIO.encoder.encode(Project(key: "acme"))
+        let json = try #require(String(data: data, encoding: .utf8))
+        #expect(!json.contains("colorIndex"))
     }
 
     @Test("Round trip")

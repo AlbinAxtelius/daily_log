@@ -306,6 +306,14 @@ final class Store {
         saveProjects()
     }
 
+    /// nil hands the project back to the derived colour.
+    func setColorIndex(_ index: Int?, for key: String) {
+        guard let idx = projects.firstIndex(where: { $0.key == key }) else { return }
+        guard projects[idx].colorIndex != index else { return }
+        projects[idx].colorIndex = index
+        saveProjects()
+    }
+
     func setArchived(_ archived: Bool, for key: String) {
         guard let idx = projects.firstIndex(where: { $0.key == key }) else { return }
         projects[idx].archived = archived

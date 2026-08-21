@@ -38,7 +38,7 @@ struct ProjectsView: View {
                             if index > 0 {
                                 Divider().opacity(0.5).padding(.leading, 34)
                             }
-                            ProjectRow(project: project, rename: { editing = $0 })
+                            ProjectRow(project: project, edit: { editing = $0 })
                         }
                     }
                     .padding(.vertical, 4)
@@ -82,7 +82,7 @@ private struct ProjectRow: View {
     @Environment(Store.self) private var store
 
     let project: Project
-    let rename: (Project) -> Void
+    let edit: (Project) -> Void
 
     @State private var hovering = false
 
@@ -115,7 +115,7 @@ private struct ProjectRow: View {
             }
 
             HStack(spacing: 2) {
-                Button("Rename") { rename(project) }
+                Button("Edit") { edit(project) }
                 Button(project.archived ? "Unarchive" : "Archive") {
                     store.setArchived(!project.archived, for: project.key)
                 }
@@ -149,12 +149,26 @@ struct ProjectEditor: View {
 
     @State private var name = ""
     @State private var key = ""
+    @State private var colorIndex: Int?
+
+    /// The key the dot should preview under — the edited tag once it is valid,
+    /// so an auto colour follows the rename as you type.
+    private var previewKey: String {
+        Project.slug(key).isEmpty ? project.key : Project.slug(key)
+    }
+
+    private var previewColor: Color {
+        // Spelled out rather than `colorIndex.map(Palette.color(at:))`: passing
+        // the method as a reference evaluates it outside this view's actor.
+        if let colorIndex { return Palette.color(at: colorIndex) }
+        return Palette.color(for: previewKey)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
-                ProjectDot(key: Project.slug(key).isEmpty ? project.key : Project.slug(key), size: 9)
-                Text("Rename project")
+                ProjectDot(key: previewKey, size: 9, override: previewColor)
+                Text("Edit project")
                     .font(.system(size: 15, weight: .semibold))
             }
             .padding(.horizontal, 20)
@@ -171,6 +185,10 @@ struct ProjectEditor: View {
                 GridRow {
                     Text("Tag").foregroundStyle(.secondary)
                     TextField("", text: $key).frame(width: 240)
+                }
+                GridRow {
+                    Text("Colour").foregroundStyle(.secondary)
+                    swatchPicker
                 }
             }
             .font(.system(size: 12))
@@ -197,6 +215,9 @@ struct ProjectEditor: View {
                 Button("Save") {
                     store.renameProject(project.key, toKey: key,
                                         name: name.isEmpty ? project.name : name)
+                    // After the rename: the key may just have changed, and a
+                    // merge into an existing project moves the colour with it.
+                    store.setColorIndex(colorIndex, for: previewKey)
                     dismiss()
                 }
                 .keyboardShortcut(.defaultAction)
@@ -209,6 +230,36 @@ struct ProjectEditor: View {
         .onAppear {
             name = project.name
             key = project.key
+            colorIndex = project.colorIndex
+        }
+    }
+
+    private var swatchPicker: some View {
+        HStack(spacing: 6) {
+            ForEach(Palette.swatches.indices, id: \.self) { index in
+                Button {
+                    // Tapping the current swatch clears it, so the derived
+                    // colour stays reachable without hunting for a reset.
+                    colorIndex = (colorIndex == index) ? nil : index
+                } label: {
+                    Circle()
+                        .fill(Palette.color(at: index))
+                        .frame(width: 16, height: 16)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(.primary.opacity(colorIndex == index ? 0.7 : 0), lineWidth: 2)
+                                .padding(-2)
+                        )
+                }
+                .buttonStyle(.plain)
+                .help(colorIndex == index ? "Chosen — click to go back to automatic" : "Use this colour")
+            }
+
+            Button("Auto") { colorIndex = nil }
+                .buttonStyle(.accessoryBar)
+                .controlSize(.small)
+                .disabled(colorIndex == nil)
+                .help("Derive the colour from the tag, as before")
         }
     }
 }
